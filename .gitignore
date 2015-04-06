@@ -14,3 +14,14 @@ lib/
 .project
 .DS_Store
 *.iml
+
+*.zip
+*.7z
+*.rar
+*.gz
+*.bz2
+*.tar
+
+*.opensdf
+*.sdf
+*.suo

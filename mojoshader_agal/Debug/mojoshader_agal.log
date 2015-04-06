@@ -1,0 +1,27 @@
+﻿生成启动时间为 2015/4/5 22:39:17。
+     1>项目“D:\MyWork\Clean3D-as\mojoshader_agal\mojoshader_agal.vcxproj”在节点 2 上(Build 个目标)。
+     1>InitializeBuildStatus:
+         正在对“Debug\mojoshader_agal.tlog\unsuccessfulbuild”执行 Touch 任务。
+       ClCompile:
+         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /Od /Oy- /D WIN32 /D _DEBUG /D _CONSOLE /D _LIB /D MOJOSHADER_NO_VERSION_INCLUDE /D _CRT_SECURE_NO_WARNINGS /D _MBCS /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc120.pdb" /Gd /TP /wd4018 /wd4244 /wd4996 /analyze- /errorReport:prompt main.c mojoshader.c
+         mojoshader.c
+         main.c
+         正在生成代码...
+       Link:
+         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"D:\MyWork\Clean3D-as\mojoshader_agal\Debug\mojoshader_agal.exe" /INCREMENTAL /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"D:\MyWork\Clean3D-as\mojoshader_agal\Debug\mojoshader_agal.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"D:\MyWork\Clean3D-as\mojoshader_agal\Debug\mojoshader_agal.lib" /MACHINE:X86 Debug\main.obj
+         Debug\mojoshader.obj
+         Debug\mojoshader_assembler.obj
+         Debug\mojoshader_common.obj
+         Debug\mojoshader_compiler.obj
+         Debug\mojoshader_effects.obj
+         Debug\mojoshader_lexer.obj
+         Debug\mojoshader_preprocessor.obj
+         mojoshader_agal.vcxproj -> D:\MyWork\Clean3D-as\mojoshader_agal\Debug\mojoshader_agal.exe
+       FinalizeBuildStatus:
+         正在删除文件“Debug\mojoshader_agal.tlog\unsuccessfulbuild”。
+         正在对“Debug\mojoshader_agal.tlog\mojoshader_agal.lastbuildstate”执行 Touch 任务。
+     1>已完成生成项目“D:\MyWork\Clean3D-as\mojoshader_agal\mojoshader_agal.vcxproj”(Build 个目标)的操作。
+
+生成成功。
+
+已用时间 00:00:02.62
