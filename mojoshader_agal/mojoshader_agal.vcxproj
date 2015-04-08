@@ -51,7 +51,7 @@
       </PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;_LIB;MOJOSHADER_NO_VERSION_INCLUDE;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;_LIB;MOJOSHADER_NO_VERSION_INCLUDE;_ASSERT_OK;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <CompileAs>CompileAsCpp</CompileAs>
       <DisableSpecificWarnings>4018;4244;4996</DisableSpecificWarnings>
     </ClCompile>
@@ -80,17 +80,13 @@
   <ItemGroup>
     <ClCompile Include="main.c" />
     <ClCompile Include="mojoshader.c" />
-    <ClCompile Include="mojoshader_assembler.c" />
     <ClCompile Include="mojoshader_common.c" />
-    <ClCompile Include="mojoshader_compiler.c" />
-    <ClCompile Include="mojoshader_effects.c" />
     <ClCompile Include="mojoshader_lexer.c" />
     <ClCompile Include="mojoshader_preprocessor.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="mojoshader.h" />
     <ClInclude Include="mojoshader_internal.h" />
-    <ClInclude Include="mojoshader_parser_hlsl.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

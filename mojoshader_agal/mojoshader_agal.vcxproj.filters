@@ -15,22 +15,10 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="mojoshader_common.c">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="mojoshader_compiler.c">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="mojoshader_effects.c">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="mojoshader_lexer.c">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="main.c">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="mojoshader_assembler.c">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="mojoshader_preprocessor.c">
@@ -39,15 +27,15 @@
     <ClCompile Include="mojoshader.c">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="mojoshader_common.c">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="mojoshader.h">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="mojoshader_internal.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="mojoshader_parser_hlsl.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

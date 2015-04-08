@@ -190,6 +190,16 @@ int _tmain(int argc, _TCHAR* argv[])
 	path = path.substr(0, index + 1);
 	file_path = path;
 
+	std::string fname(argv[1]);
+	index = fname.find_last_of(".");
+	if (index < 0){
+		std::cout << "无法获取文件名";
+		getchar();
+		return 0;
+	}
+	fname = fname.substr(0, index);
+	fname += "_";
+
 	std::ifstream ifs(argv[1]);
 	if (!ifs.is_open()){
 		std::cout << "打开文件 " << argv[1] << " 失败";
@@ -213,11 +223,16 @@ int _tmain(int argc, _TCHAR* argv[])
 		macro += "SM3";
 
 		std::vector<std::string> macros = split(macro, " ");
+		std::string instance;
 
 		std::vector<MOJOSHADER_preprocessorDefine> vecDefines;
 		for (unsigned int i = 0; i < macros.size(); i++){
 			MOJOSHADER_preprocessorDefine def = { macros[i].c_str(), "" };
 			vecDefines.push_back(def);
+			instance += macros[i];
+			if (i < (macros.size() - 1)){
+				instance += "_";
+			}
 		}
 		const MOJOSHADER_preprocessData * data =
 			MOJOSHADER_preprocess(argv[1], str.c_str(), str.size(), &vecDefines.front(), vecDefines.size(), 
@@ -231,7 +246,14 @@ int _tmain(int argc, _TCHAR* argv[])
 			return 0;
 		}
 		else{
-			data->output;
+			std::ofstream ofs((fname + instance + ".glsl").c_str());
+			if (!ofs.is_open()){
+				std::cout << "打开文件 " << argv[1] << " 失败";
+				getchar();
+				return 0;
+			}
+			ofs << data->output;
+			ofs.close();
 		}
 		MOJOSHADER_freePreprocessData(data);
 
@@ -239,7 +261,7 @@ int _tmain(int argc, _TCHAR* argv[])
 		//MOJOSHADER_compile(MOJOSHADER_SRC_PROFILE_HLSL_VS_3_0, argv[1], str.c_str(), str.size(), &vecDefines.front(), vecDefines.size(),
 		//	includeOpen, includeClose, NULL, NULL, NULL);
 		//if (cdata->error_count){
-		//	std::cout << "预处理 " << argv[1] << "错误\n";
+		//	std::cout << "编译 " << argv[1] << "错误\n";
 		//	for (unsigned int i = 0; i < cdata->error_count; i++){
 		//		std::cout << "文件[" << cdata->errors[i].filename << "]行[" << cdata->errors[i].error_position << "]" << cdata->errors[i].error << "\n";
 		//	}
