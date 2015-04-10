@@ -1,5 +1,8 @@
 package
 {
+import clean3D.mojoshaderlib.CModule;
+import clean3D.mojoshaderlib.ram;
+
 import clean3d.assets.TextureAssets;
 import clean3d.core.Clean3D;
 import clean3d.events.EngineEvent;
@@ -18,6 +21,8 @@ import flash.display3D.VertexBuffer3D;
 import flash.events.Event;
 import flash.geom.Matrix3D;
 import flash.system.Capabilities;
+import flash.utils.ByteArray;
+import flash.utils.Endian;
 
 [SWF(width="1024", height="768", frameRate="60", backgroundColor="#000000")]
 	public class CleanSample_TextureQuad extends Sprite
@@ -56,6 +61,30 @@ import flash.system.Capabilities;
 			// this event is dispatched when stage3D is set up
 			mClean3D.addEventListener(EngineEvent.ENGINE_INITIALIZED, onInitlized);
 			mClean3D.addEventListener(EngineEvent.ENGINE_ENTERFRAME, onEnterFrame);
+
+            var defines_ptr:int = CModule.alloca(Preprocess_defineValue.size * 5);
+            for(var x:int = 0;x<5;x++){
+                var defines:Preprocess_defineValue = new Preprocess_defineValue(ram,defines_ptr + Preprocess_defineValue.size * x);
+                defines.definition
+            }
+
+            var result:int = mojoshaderlib.preprocess("123","456",3,defines_ptr,5,null);
+            var data:Preprocess_dataValue = new Preprocess_dataValue(ram,result);
+            var output:String;
+            if(data.error_count == 0){
+                output = CModule.readString(data.output,data.outputlen);
+                trace(output);
+            }else{
+                for(var i:int = 0;i<data.error_count;i++){
+                    var error:Preprocess_errorValue = new Preprocess_errorValue(ram, data.errors + Preprocess_errorValue.size * i);
+                    var errormsg:String = CModule.readString(error.error,error.errorlen);
+                    var filename:String = CModule.readString(error.filename,error.filenamelen);
+                    trace(filename + "[" + error.error_position + "]:" + errormsg);
+                }
+            }
+            mojoshaderlib.freePreprocessData(result);
+
+            var jl:uint = Flash3dLib.JOINT_BIND_LEN;
 		}
 		
 		private function onInitlized(e:EngineEvent):void

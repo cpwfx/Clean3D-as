@@ -132,12 +132,39 @@
 #include <string.h>
 #include "mojoshaderlib.h"
 
-__attribute__((annotate("as3sig:public function _wrap_preprocess(filename:String, source:String, sourcelen:int):*")))
+__attribute__((annotate("as3sig:public function _wrap_preprocess_onIncludeOpen_func_ptr(f:Function):void")))
+char *_wrap_preprocess_onIncludeOpen_func_ptr (char const *arg1, char const *arg2) {
+  char *result ;
+  
+  {
+    int len = strlen(arg1);
+    AS3_DeclareVar(arg1, String);
+    AS3_CopyCStringToVar(arg1, arg1, len);
+  }
+  {
+    int len = strlen(arg2);
+    AS3_DeclareVar(arg2, String);
+    AS3_CopyCStringToVar(arg2, arg2, len);
+  }
+  inline_as3(
+    "var asresult = f(arg1, arg2);"
+    );
+  {
+    AS3_MallocString(result, asresult);
+  }
+  return result;
+}
+
+
+__attribute__((annotate("as3sig:public function _wrap_preprocess(filename:String, source:String, sourcelen:int, defines:int, define_count:int, onIncludeOpen:Function):int")))
 void _wrap_preprocess() {
   char *arg1 = (char *) 0 ;
   char *arg2 = (char *) 0 ;
   unsigned int arg3 ;
-  preprocess_data result ;
+  preprocess_define *arg4 = (preprocess_define *) 0 ;
+  unsigned int arg5 ;
+  IncludeOpen arg6 = (IncludeOpen) 0 ;
+  preprocess_data *result ;
   
   {
     AS3_MallocString(arg1, filename);
@@ -148,7 +175,26 @@ void _wrap_preprocess() {
   {
     AS3_GetScalarFromVar(arg3, sourcelen);
   }
-  result = preprocess((char const *)arg1,(char const *)arg2,arg3);
+  {
+    AS3_GetScalarFromVar(arg4, defines);
+  }
+  {
+    AS3_GetScalarFromVar(arg5, define_count);
+  }
+  {
+    swig_as3(
+      "var f:Function = onIncludeOpen;"
+      "var ptr:int = SWIG_AS3GetCCallPtr(f);"
+      "if (!ptr) {"
+      "  var wrap = function() { _wrap_preprocess_onIncludeOpen_func_ptr(onIncludeOpen);};"
+      "  SWIG_AS3RegCCallWrapper(f, wrap);"
+      "  ptr = SWIG_AS3GetCCallPtr(f);"
+      "}"
+      "%0 = ptr;"
+      :"=r"(arg6)
+      );
+  }
+  result = (preprocess_data *)preprocess((char const *)arg1,(char const *)arg2,arg3,arg4,arg5,(char const *(*)(char const *,char const *))arg6);
   {
     free(arg1);
   }
@@ -156,16 +202,8 @@ void _wrap_preprocess() {
     free(arg2);
   }
   {
-    preprocess_data *retval = (preprocess_data *) malloc(sizeof(preprocess_data));
-    memcpy(retval, &result, sizeof(preprocess_data));
-    
-    swig_as3(
-      "var ptr:int = %0;" 
-      "var out = new $astype();"
-      "out.swigCPtr = ptr;"
-      "var asresult = out;"
-      ::"r"(retval)
-      );
+    AS3_DeclareVar(asresult, int);
+    AS3_CopyScalarToVar(asresult, result);
   }
   {
     AS3_ReturnAS3Var(asresult);
@@ -173,11 +211,13 @@ void _wrap_preprocess() {
 }
 
 
-__attribute__((annotate("as3sig:public function _wrap_freePreprocessData(data:*):void")))
+__attribute__((annotate("as3sig:public function _wrap_freePreprocessData(data:int):void")))
 void _wrap_freePreprocessData() {
-  preprocess_data arg1 ;
+  preprocess_data *arg1 = (preprocess_data *) 0 ;
   
-  
+  {
+    AS3_GetScalarFromVar(arg1, data);
+  }
   freePreprocessData(arg1);
   {
     

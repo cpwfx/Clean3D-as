@@ -97,6 +97,96 @@ import C_Run.*;
 import com.adobe.flascc.swig.*;
 import flash.utils.ByteArray;
 
+public class Preprocess_errorValue {
+	public static const size:int = 20;
+
+	private const _ba:ByteArray;
+	private const _offs:int;
+
+	public function Preprocess_errorValue(ba:ByteArray = null, offs:int = 0) {
+		if (!ba) {
+			ba = new ByteArray();
+			ba.endian = "littleEndian";
+			ba.length = 20;
+		}
+		_ba = ba;
+		_offs = offs;
+	}
+
+	public function addressOf():int {
+		import C_Run.ram;
+		if (_ba != ram) {
+			throw new Error("Cannot take address of object not in domainMemory");
+		}
+		return _offs;
+	}
+
+	public function get error():int {
+		_ba.position = _offs + 0;
+		return _ba.readInt();
+	}
+
+	public function set error(v:int):void {
+		_ba.position = _offs + 0;
+		_ba.writeInt(v);
+	}
+
+	public function get errorlen():uint {
+		_ba.position = _offs + 4;
+		return _ba.readUnsignedInt();
+	}
+
+	public function set errorlen(v:uint):void {
+		_ba.position = _offs + 4;
+		_ba.writeInt(v);
+	}
+
+	public function get filename():int {
+		_ba.position = _offs + 8;
+		return _ba.readInt();
+	}
+
+	public function set filename(v:int):void {
+		_ba.position = _offs + 8;
+		_ba.writeInt(v);
+	}
+
+	public function get filenamelen():uint {
+		_ba.position = _offs + 12;
+		return _ba.readUnsignedInt();
+	}
+
+	public function set filenamelen(v:uint):void {
+		_ba.position = _offs + 12;
+		_ba.writeInt(v);
+	}
+
+	public function get error_position():int {
+		_ba.position = _offs + 16;
+		return _ba.readInt();
+	}
+
+	public function set error_position(v:int):void {
+		_ba.position = _offs + 16;
+		_ba.writeInt(v);
+	}
+
+	public function read(ptr:int):void {
+		import C_Run.ram;
+		_ba.position = _offs;
+		_ba.readBytes(ram, ptr, size);
+	}
+
+	public function write(ptr:int, ba:ByteArray = null):void {
+		import C_Run.ram;
+		if (!ba) {
+			ba = C_Run.ram;
+		}
+		ba.position = ptr;
+		ba.writeBytes(_ba, _offs, size);
+	}
+}
+
 public class Preprocess_dataValue {
 	public static const size:int = 16;
 
@@ -151,12 +241,12 @@ public class Preprocess_dataValue {
 		_ba.writeInt(v);
 	}
 
-	public function get handle():int {
+	public function get outputlen():uint {
 		_ba.position = _offs + 12;
-		return _ba.readInt();
+		return _ba.readUnsignedInt();
 	}
 
-	public function set handle(v:int):void {
+	public function set outputlen(v:uint):void {
 		_ba.position = _offs + 12;
 		_ba.writeInt(v);
 	}
@@ -177,12 +267,72 @@ public class Preprocess_dataValue {
 	}
 }
 
-public class mojoshaderlib {
-	public static function preprocess(filename:String, source:String, sourcelen:int):* {
-		return _wrap_preprocess(filename, source, sourcelen);
+public class Preprocess_defineValue {
+	public static const size:int = 8;
+
+	private const _ba:ByteArray;
+	private const _offs:int;
+
+	public function Preprocess_defineValue(ba:ByteArray = null, offs:int = 0) {
+		if (!ba) {
+			ba = new ByteArray();
+			ba.endian = "littleEndian";
+			ba.length = 8;
+		}
+		_ba = ba;
+		_offs = offs;
 	}
 
-	public static function freePreprocessData(data:*):void {
+	public function addressOf():int {
+		import C_Run.ram;
+		if (_ba != ram) {
+			throw new Error("Cannot take address of object not in domainMemory");
+		}
+		return _offs;
+	}
+
+	public function get identifier():int {
+		_ba.position = _offs + 0;
+		return _ba.readInt();
+	}
+
+	public function set identifier(v:int):void {
+		_ba.position = _offs + 0;
+		_ba.writeInt(v);
+	}
+
+	public function get definition():int {
+		_ba.position = _offs + 4;
+		return _ba.readInt();
+	}
+
+	public function set definition(v:int):void {
+		_ba.position = _offs + 4;
+		_ba.writeInt(v);
+	}
+
+	public function read(ptr:int):void {
+		import C_Run.ram;
+		_ba.position = _offs;
+		_ba.readBytes(ram, ptr, size);
+	}
+
+	public function write(ptr:int, ba:ByteArray = null):void {
+		import C_Run.ram;
+		if (!ba) {
+			ba = C_Run.ram;
+		}
+		ba.position = ptr;
+		ba.writeBytes(_ba, _offs, size);
+	}
+}
+
+public class mojoshaderlib {
+	public static function preprocess(filename:String, source:String, sourcelen:int, defines:int, define_count:int, onIncludeOpen:Function):int {
+		return _wrap_preprocess(filename, source, sourcelen, defines, define_count, onIncludeOpen);
+	}
+
+	public static function freePreprocessData(data:int):void {
 		_wrap_freePreprocessData(data);
 	}
 

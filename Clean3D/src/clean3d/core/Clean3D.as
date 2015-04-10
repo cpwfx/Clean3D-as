@@ -84,7 +84,7 @@ package clean3d.core
 		
 		public function Clean3D(stage:flash.display.Stage, 
 								viewPort:Rectangle=null, stage3D:Stage3D=null,
-								renderMode:String="auto", profile:Object=Context3DProfile.STANDARD)
+								renderMode:String="auto", profile:Object="auto")
 		{
 			if (stage == null) throw new ArgumentError("Stage must not be null");
 			if (viewPort == null) viewPort = new Rectangle(0, 0, stage.stageWidth, stage.stageHeight);
