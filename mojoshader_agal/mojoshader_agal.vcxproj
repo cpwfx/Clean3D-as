@@ -20,6 +20,7 @@
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v120</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
@@ -79,7 +80,6 @@
   <ItemGroup>
     <ClCompile Include="main.c" />
     <ClCompile Include="mojoshader.c" />
-    <ClCompile Include="mojoshaderlib.c" />
     <ClCompile Include="mojoshader_common.c" />
     <ClCompile Include="mojoshader_lexer.c" />
     <ClCompile Include="mojoshader_preprocessor.c" />

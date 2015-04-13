@@ -7,6 +7,10 @@ import clean3d.assets.TextureAssets;
 import clean3d.core.Clean3D;
 import clean3d.events.EngineEvent;
 import clean3d.math.Matrix3DUtils;
+import clean3d.renderer.GeometryType;
+import clean3d.renderer.LightVSVariation;
+import clean3d.renderer.Variations;
+import clean3d.renderer.Variations;
 import clean3d.textures.TextureProxyBase;
 
 import com.adobe.utils.AGALMiniAssembler;
@@ -19,10 +23,17 @@ import flash.display3D.IndexBuffer3D;
 import flash.display3D.Program3D;
 import flash.display3D.VertexBuffer3D;
 import flash.events.Event;
+import flash.events.IOErrorEvent;
 import flash.geom.Matrix3D;
+import flash.net.URLLoader;
+import flash.net.URLLoaderDataFormat;
+import flash.net.URLRequest;
 import flash.system.Capabilities;
 import flash.utils.ByteArray;
+import flash.utils.ByteArray;
 import flash.utils.Endian;
+
+import zips.ZipFile;
 
 [SWF(width="1024", height="768", frameRate="60", backgroundColor="#000000")]
 	public class CleanSample_TextureQuad extends Sprite
@@ -33,6 +44,8 @@ import flash.utils.Endian;
 		private var _pm:Program3D;
 		private var _tex:TextureProxyBase;
 		private var _matrixProject3D:Matrix3D = new Matrix3D();
+
+        private var _zip:ZipFile;
 		
 		//floor diffuse map
 		[Embed(source="/../embeds/arid.jpg")]
@@ -62,13 +75,73 @@ import flash.utils.Endian;
 			mClean3D.addEventListener(EngineEvent.ENGINE_INITIALIZED, onInitlized);
 			mClean3D.addEventListener(EngineEvent.ENGINE_ENTERFRAME, onEnterFrame);
 
-            var defines_ptr:int = CModule.alloca(Preprocess_defineValue.size * 5);
-            for(var x:int = 0;x<5;x++){
+
+		}
+		
+		private function onInitlized(e:EngineEvent):void
+		{
+			trace("onInitlized");
+
+            var urlRequest:URLRequest = new URLRequest("../../CoreData.zip");
+            var urlLoader:URLLoader = new URLLoader();
+            urlLoader.dataFormat = URLLoaderDataFormat.BINARY;
+            urlLoader.addEventListener(Event.COMPLETE, onCoreDataLoaded);
+            urlLoader.addEventListener(IOErrorEvent.IO_ERROR,onCoreDataLoadError);
+            urlLoader.load(urlRequest);
+		}
+
+        private function onCoreDataLoaded(e:Event):void{
+            _zip = new ZipFile(URLLoader(e.target).data);
+
+            testMojoShader("CoreData/Shaders/GLSL/LitSolid_vs.glsl");
+            addTriangle();
+        }
+
+        private function onCoreDataLoadError(e:IOErrorEvent):void{
+            trace(e.toString());
+        }
+
+        private function testMojoShader(filename:String):void{
+
+            var ba:ByteArray = _zip.getFileBytes(filename);
+            ba.endian = Endian.LITTLE_ENDIAN;
+            var context:String = ba.readUTFBytes(ba.length);
+
+            for (var j:int = 0; j < GeometryType.MAX_GEOMETRYTYPES * LightVSVariation.MAX_LIGHT_VS_VARIATIONS; ++j)
+            {
+                var g:int = j / LightVSVariation.MAX_LIGHT_VS_VARIATIONS;
+                var l:int = j % LightVSVariation.MAX_LIGHT_VS_VARIATIONS;
+
+
+                var macro:String;
+                macro = Variations.lightVSVariations[l];
+                macro += Variations.geometryVSVariations[g];
+                macro += "COMPILEVS ";
+                macro += "SM3";
+
+                processShader(macro,filename,context);
+            }
+        }
+
+        private function onOpenInclude(fname:String,parent:String):String{
+            var ba:ByteArray = _zip.getFileBytes("CoreData/Shaders/GLSL/" + fname);
+            ba.endian = Endian.LITTLE_ENDIAN;
+            var context:String = ba.readUTFBytes(ba.length);
+            return context;
+        }
+
+        private function processShader(macro:String,filename:String,context:String):void{
+            var macros:Array = macro.split(" ");
+
+            var defines_ptr:int = CModule.alloca(Preprocess_defineValue.size * macros.length);
+            var definition_ptr:int = CModule.mallocString("");
+            for(var x:int = 0;x<macros.length;x++){
                 var defines:Preprocess_defineValue = new Preprocess_defineValue(ram,defines_ptr + Preprocess_defineValue.size * x);
-                defines.definition
+                defines.identifier = CModule.mallocString(macros[x] as String);
+                defines.definition = definition_ptr;
             }
 
-            var result:int = mojoshaderlib.preprocess("123","456",3,defines_ptr,5,null);
+            var result:int = mojoshaderlib.preprocess(filename,context,context.length,defines_ptr,macros.length,onOpenInclude);
             var data:Preprocess_dataValue = new Preprocess_dataValue(ram,result);
             var output:String;
             if(data.error_count == 0){
@@ -83,21 +156,13 @@ import flash.utils.Endian;
                 }
             }
             mojoshaderlib.freePreprocessData(result);
-
-            var jl:uint = Flash3dLib.JOINT_BIND_LEN;
-		}
-		
-		private function onInitlized(e:EngineEvent):void
-		{
-			trace("onInitlized");
-			addTriangle();
-		}
+        }
 		
 		private function onEnterFrame(e:EngineEvent):void
 		{
 			var context3d:Context3D = mClean3D.context;
 			
-			if(_tex.loaded){
+			if(_tex && _tex.loaded){
 				context3d.setProgramConstantsFromMatrix(Context3DProgramType.VERTEX, 0, _matrixProject3D,true);
 				
 				context3d.setVertexBufferAt( 0, this._vb, 0, Context3DVertexBufferFormat.FLOAT_2 );
