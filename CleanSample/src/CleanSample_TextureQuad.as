@@ -13,6 +13,9 @@ import clean3d.renderer.Variations;
 import clean3d.renderer.Variations;
 import clean3d.textures.TextureProxyBase;
 
+import com.adobe.glsl2agal.compileShader;
+import com.adobe.glsl2agal.vfs.ISpecialFile;
+
 import com.adobe.utils.AGALMiniAssembler;
 
 import flash.display.Sprite;
@@ -36,7 +39,7 @@ import flash.utils.Endian;
 import zips.ZipFile;
 
 [SWF(width="1024", height="768", frameRate="60", backgroundColor="#000000")]
-	public class CleanSample_TextureQuad extends Sprite
+	public class CleanSample_TextureQuad extends Sprite implements com.adobe.glsl2agal.vfs.ISpecialFile
 	{
 		private var mClean3D:Clean3D;
 		private var _vb:VertexBuffer3D;
@@ -93,6 +96,10 @@ import zips.ZipFile;
         private function onCoreDataLoaded(e:Event):void{
             _zip = new ZipFile(URLLoader(e.target).data);
 
+            com.adobe.glsl2agal.CModule.rootSprite = this;
+            com.adobe.glsl2agal.CModule.vfs.console = this;
+            com.adobe.glsl2agal.CModule.startAsync();
+
             testMojoShader("CoreData/Shaders/GLSL/LitSolid_vs.glsl");
             addTriangle();
         }
@@ -146,7 +153,9 @@ import zips.ZipFile;
             var output:String;
             if(data.error_count == 0){
                 output = CModule.readString(data.output,data.outputlen);
-                trace(output);
+                var r:String = com.adobe.glsl2agal.compileShader(output,0,false,false);
+                var compiledVertexShader:Object = JSON.parse(r);
+                trace(compiledVertexShader);
             }else{
                 for(var i:int = 0;i<data.error_count;i++){
                     var error:Preprocess_errorValue = new Preprocess_errorValue(ram, data.errors + Preprocess_errorValue.size * i);
@@ -214,6 +223,24 @@ import zips.ZipFile;
 			this._pm.upload( vagal.agalcode, fagal.agalcode );
 
 			_matrixProject3D = Matrix3DUtils.createOrthoMatrixLH(_matrixProject3D,stage.stageWidth,stage.stageHeight,-10000,10000);
-		}		
-	}
+		}
+
+    public function read(fileDescriptor:int, bufPtr:int, nbyte:int, errnoPtr:int):int {
+        return 0;
+    }
+
+    public function write(fileDescriptor:int, bufPtr:int, nbyte:int, errnoPtr:int):int {
+        var str:String = CModule.readString(bufPtr, nbyte)
+        trace( str )
+        return nbyte;
+    }
+
+    public function fcntl(fileDescriptor:int, cmd:int, data:int, errnoPtr:int):int {
+        return 0;
+    }
+
+    public function ioctl(fileDescriptor:int, request:int, data:int, errnoPtr:int):int {
+        return 0;
+    }
+}
 }
